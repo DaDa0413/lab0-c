@@ -25,6 +25,10 @@ typedef struct ELE {
 /* Queue structure */
 typedef struct {
     list_ele_t *head; /* Linked list of elements */
+    // Dada: Add 2 field - tail and size to implement q_insert_tail() and
+    // q_size()
+    list_ele_t *tail;
+    unsigned int size;
     /* TODO: You will need to add more fields to this structure
      *        to efficiently implement q_size and q_insert_tail.
      */
