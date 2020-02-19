@@ -80,6 +80,7 @@ bool q_insert_head(queue_t *q, char *s)
         return false;
     }
     strncpy(newh->value, s, s_lenth);
+    newh->value[s_lenth] = '\0';
     // Dada: maintain the queue structure
     newh->next = q->head;
     q->head = newh;
@@ -151,11 +152,15 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
     // Dada: NULL queue case and empty queue case
     if (q == NULL || q->head == NULL)
         return false;
-    strncpy(sp, q->head->value, strlen(q->head->value));
+    unsigned int s_lenth = strlen(q->head->value);
+    strncpy(sp, q->head->value, s_lenth);
+    sp[s_lenth] = '\0';
     list_ele_t *tmp = q->head;
     // Dada: maintain queue structure and free removed element
     q->size -= 1;
     q->head = q->head->next;
+    // Free the popped element and the memeory of string
+    free(tmp->value);
     free(tmp);
     return true;
 }
