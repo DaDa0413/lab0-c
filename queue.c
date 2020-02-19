@@ -59,8 +59,7 @@ bool q_insert_head(queue_t *q, char *s)
         if ((q = q_new()) == NULL)
             return false;
     }
-    list_ele_t *newh;
-    newh = malloc(sizeof(list_ele_t));
+    list_ele_t *newh = malloc(sizeof(list_ele_t));
     /* Don't forget to allocate space for the string and copy it */
     /* What if either call to malloc returns NULL? */
     if (newh == NULL) {
@@ -135,6 +134,8 @@ bool q_insert_tail(queue_t *q, char *s)
     // Dada: maintain the queue structure
     newh->next = NULL;
     q->tail->next = newh;
+    if (q->size == 0)
+        q->head = newh;
     q->tail = newh;
     q->size += 1;
     return true;
@@ -162,8 +163,9 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
     // Dada: maintain queue structure and free removed element
     q->size -= 1;
     q->head = q->head->next;
-    if (q->size == 0)
+    if (q->size == 0) {
         q->tail = NULL;
+    }
     // Free the popped element and the memeory of string
     free(tmp->value);
     free(tmp);
@@ -194,11 +196,13 @@ void q_reverse(queue_t *q)
 {
     /* TODO: You need to write the code for this function */
     /* TODO: Remove the above comment when you are about to implement. */
+    list_ele_t *prev_ptr = NULL;
     list_ele_t *current_ptr = q->head;
     list_ele_t *next_ptr = NULL;
     while (current_ptr != NULL) {
         next_ptr = current_ptr->next;
-        next_ptr->next = current_ptr;
+        current_ptr->next = prev_ptr;
+        prev_ptr = current_ptr;
         current_ptr = next_ptr;
     }
     // Dada: maintain the queue structure
