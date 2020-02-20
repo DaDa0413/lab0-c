@@ -31,7 +31,6 @@ void q_free(queue_t *q)
     /* Free queue structure */
     // Dada: Free all the list element and the head of the queue
     if (q == NULL) {
-        printf("q_free() failed due to NULL q\n");
         return;
     }
 
@@ -162,8 +161,13 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
     if (q == NULL || q->head == NULL)
         return false;
     unsigned int s_lenth = strlen(q->head->value);
-    strncpy(sp, q->head->value, s_lenth);
-    sp[s_lenth] = '\0';
+    if (s_lenth < bufsize) {
+        strncpy(sp, q->head->value, s_lenth);
+        sp[s_lenth] = '\0';
+    } else {
+        strncpy(sp, q->head->value, bufsize - 1);
+        sp[bufsize - 1] = '\0';
+    }
     list_ele_t *tmp = q->head;
     // Dada: maintain queue structure and free removed element
     q->size -= 1;
