@@ -30,6 +30,11 @@ void q_free(queue_t *q)
     /* TODO: How about freeing the list elements and the strings? */
     /* Free queue structure */
     // Dada: Free all the list element and the head of the queue
+    if (q == NULL) {
+        printf("q_free() failed due to NULL q\n");
+        return;
+    }
+
     list_ele_t *current_ptr = q->head;
     list_ele_t *next = NULL;
     while (current_ptr != NULL) {
