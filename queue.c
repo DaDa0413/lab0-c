@@ -86,7 +86,6 @@ bool q_insert_head(queue_t *q, char *s)
     if (q->size == 0)
         q->tail = newh;
     q->size += 1;
-    printf("%s\n", q->head->value);
     return true;
 }
 
@@ -153,8 +152,11 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
         strncpy(sp, q->head->value, s_lenth);
         sp[s_lenth] = '\0';
     } else {
-        strncpy(sp, q->head->value, bufsize - 1);
-        sp[bufsize - 1] = '\0';
+        if (bufsize > 1) {
+            strncpy(sp, q->head->value, bufsize - 1);
+            sp[bufsize - 1] = '\0';
+        } else if (bufsize == 1)
+            sp[bufsize - 1] = '\0';
     }
     list_ele_t *tmp = q->head;
     // Dada: maintain queue structure and free removed element
