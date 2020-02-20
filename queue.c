@@ -15,12 +15,13 @@ queue_t *q_new()
     /* TODO: What if malloc returned NULL? */
     // Dada: If nothing return by malloc, just return NULL
     if (q == NULL) {
-        printf("q_new() failed\n");
+        printf("ERROR: q_new() failed\n");
         return NULL;
     }
     q->head = NULL;
     q->tail = NULL;
     q->size = 0;
+    printf("INFO: q new success\n");
     return q;
 }
 
@@ -56,30 +57,25 @@ void q_free(queue_t *q)
 bool q_insert_head(queue_t *q, char *s)
 {
     /* TODO: What should you do if the q is NULL? */
-    // Dada: Call q_new() and handle the NULL case
-    bool q_was_NULL = false;
     if (q == NULL) {
-        q_was_NULL = true;
-        if ((q = q_new()) == NULL)
-            return false;
+        printf("ERROR: Insert head to a NULL queue\n");
+        return false;
     }
     list_ele_t *newh = malloc(sizeof(list_ele_t));
     /* Don't forget to allocate space for the string and copy it */
     /* What if either call to malloc returns NULL? */
     if (newh == NULL) {
         // Dada: if queue is allocated at this time
-        if (q_was_NULL)
-            q_free(q);
+        printf("ERROR: allocate newh fail\n");
         return false;
     }
     unsigned int s_lenth = strlen(s);
     newh->value = malloc(sizeof(char) * (s_lenth + 1));
     // Dada: if fail to allocate space for value
     if (newh->value == NULL) {
+        printf("ERROR: allocate newh->value fail\n");
         free(newh);
         // Dada: if queue is allocated at this time
-        if (q_was_NULL)
-            q_free(q);
         return false;
     }
     strncpy(newh->value, s, s_lenth);
@@ -90,6 +86,7 @@ bool q_insert_head(queue_t *q, char *s)
     if (q->size == 0)
         q->tail = newh;
     q->size += 1;
+    printf("%s\n", q->head->value);
     return true;
 }
 
@@ -105,22 +102,15 @@ bool q_insert_tail(queue_t *q, char *s)
     /* TODO: You need to write the complete code for this function */
     /* Remember: It should operate in O(1) time */
     /* TODO: Remove the above comment when you are about to implement. */
-
-    // Dada: Call q_new() and handle the NULL case
-    bool q_was_NULL = false;
     if (q == NULL) {
-        q_was_NULL = true;
-        if ((q = q_new()) == NULL)
-            return false;
+        printf("ERROR: Insert tail to a NULL queue\n");
+        return false;
     }
     list_ele_t *newh;
     newh = malloc(sizeof(list_ele_t));
     /* Don't forget to allocate space for the string and copy it */
     /* What if either call to malloc returns NULL? */
     if (newh == NULL) {
-        // Dada: if queue is allocated at this time
-        if (q_was_NULL)
-            q_free(q);
         return false;
     }
     unsigned int s_lenth = strlen(s);
@@ -128,16 +118,14 @@ bool q_insert_tail(queue_t *q, char *s)
     // Dada: if fail to allocate space for value
     if (newh->value == NULL) {
         free(newh);
-        // Dada: if queue is allocated at this time
-        if (q_was_NULL)
-            q_free(q);
         return false;
     }
     strncpy(newh->value, s, s_lenth);
     newh->value[s_lenth] = '\0';
     // Dada: maintain the queue structure
     newh->next = NULL;
-    q->tail->next = newh;
+    if (q->size != 0)
+        q->tail->next = newh;
     if (q->size == 0)
         q->head = newh;
     q->tail = newh;
@@ -191,6 +179,10 @@ int q_size(queue_t *q)
     /* Remember: It should operate in O(1) time */
     /* TODO: Remove the above comment when you are about to implement. */
     // Dada: return the size we take down
+    if (q == NULL) {
+        printf("ERROR: No size of a NULL queue\n");
+        return 0;
+    }
     return q->size;
 }
 
@@ -205,6 +197,10 @@ void q_reverse(queue_t *q)
 {
     /* TODO: You need to write the code for this function */
     /* TODO: Remove the above comment when you are about to implement. */
+    if (q == NULL) {
+        printf("ERROR: Reverse a NULL queue\n");
+        return;
+    }
     list_ele_t *prev_ptr = NULL;
     list_ele_t *current_ptr = q->head;
     list_ele_t *next_ptr = NULL;
@@ -227,6 +223,10 @@ void q_reverse(queue_t *q)
  */
 void q_sort(queue_t *q)
 {
+    if (q == NULL) {
+        printf("ERROR: q sort a NULL queue\n");
+        return;
+    }
     /* TODO: You need to write the code for this function */
     /* TODO: Remove the above comment when you are about to implement. */
     // Accroding to ascending order, bubble sort the queue
