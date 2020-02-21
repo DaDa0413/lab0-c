@@ -4,6 +4,7 @@
 
 #include "harness.h"
 #include "queue.h"
+#include "strnatcmp.h"
 
 /*
  * Create empty queue.
@@ -223,6 +224,10 @@ void q_reverse(queue_t *q)
  */
 void q_sort(queue_t *q)
 {
+    char *a = "aa";
+    char *b = "bb";
+    strnatcmp(a, b);
+    strnatcasecmp(a, b);
     if (q == NULL) {
         printf("ERROR: q sort a NULL queue\n");
         return;
