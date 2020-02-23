@@ -143,9 +143,7 @@ bool q_insert_tail(queue_t *q, char *s)
  */
 bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
 {
-    /* TODO: You need to fix up this code. */
-    /* TODO: Remove the above comment when you are about to implement. */
-    // Dada: NULL queue case and empty queue case
+    // NULL queue case and empty queue case
     if (q == NULL || q->head == NULL)
         return false;
     unsigned int s_lenth = strlen(q->head->value);
@@ -178,10 +176,7 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
  */
 int q_size(queue_t *q)
 {
-    /* TODO: You need to write the code for this function */
-    /* Remember: It should operate in O(1) time */
-    /* TODO: Remove the above comment when you are about to implement. */
-    // Dada: return the size we take down
+    // Return the size we take down
     if (q == NULL) {
         printf("ERROR: No size of a NULL queue\n");
         return 0;
@@ -198,8 +193,6 @@ int q_size(queue_t *q)
  */
 void q_reverse(queue_t *q)
 {
-    /* TODO: You need to write the code for this function */
-    /* TODO: Remove the above comment when you are about to implement. */
     if (q == NULL) {
         printf("ERROR: Reverse a NULL queue\n");
         return;
@@ -226,23 +219,22 @@ void q_reverse(queue_t *q)
  */
 void q_sort(queue_t *q)
 {
-    char *a = "aa";
-    char *b = "bb";
-    strnatcmp(a, b);
-    strnatcasecmp(a, b);
+    // Handling NULL queue
     if (q == NULL) {
         printf("ERROR: q sort a NULL queue\n");
         return;
     }
-    /* TODO: You need to write the code for this function */
-    /* TODO: Remove the above comment when you are about to implement. */
     // Accroding to ascending order, bubble sort the queue
     list_ele_t *roundend = q->tail;
     while (roundend != q->head) {
         list_ele_t *current = q->head;
         while (current != roundend) {
-            // if current element is bigger than next element
-            // than swap the values of the two
+            /* if current element is bigger than next element
+            / then swap the values of the two.
+            /
+            / Tricky solution: Swap the VALUE instead of LIST ELEMENT,
+            / it will reduce several pointer re-assignment into three.
+            */
             if (strcmp(current->value, current->next->value) > 0) {
                 char *temp;
                 temp = current->next->value;
