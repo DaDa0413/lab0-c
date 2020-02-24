@@ -29,9 +29,7 @@ queue_t *q_new()
 /* Free all storage used by queue */
 void q_free(queue_t *q)
 {
-    /* TODO: How about freeing the list elements and the strings? */
-    /* Free queue structure */
-    // Dada: Free all the list element and the head of the queue
+    // Free all the list element and the head of the queue
     if (q == NULL) {
         return;
     }
@@ -40,7 +38,7 @@ void q_free(queue_t *q)
     list_ele_t *next = NULL;
     while (current_ptr != NULL) {
         next = current_ptr->next;
-        // Dada: Free the memory used by string and list elements
+        // Free the memory used by string and list elements
         free(current_ptr->value);
         free(current_ptr);
         current_ptr = next;
@@ -134,6 +132,27 @@ bool q_insert_tail(queue_t *q, char *s)
     return true;
 }
 
+/* Insert a existed list element into queue
+ * Return true if success
+ * Return false if insert element to a NULL queue
+ */
+bool q_insert_element_to_tail(queue_t *q, list_ele_t *ele)
+{
+    if (q == NULL) {
+        printf("ERROR: Insert a list element to tailto a NULL queue\n");
+        return false;
+    }
+    // Maintain the queue structure
+    ele->next = NULL;
+    if (q->size != 0)
+        q->tail->next = ele;
+    if (q->size == 0)
+        q->head = ele;
+    q->tail = ele;
+    q->size += 1;
+    return true;
+}
+
 /*
  * Attempt to remove element from head of queue.
  * Return true if successful.
@@ -144,9 +163,7 @@ bool q_insert_tail(queue_t *q, char *s)
  */
 bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
 {
-    /* TODO: You need to fix up this code. */
-    /* TODO: Remove the above comment when you are about to implement. */
-    // Dada: NULL queue case and empty queue case
+    // NULL queue case and empty queue case
     if (q == NULL || q->head == NULL)
         return false;
     unsigned int s_lenth = strlen(q->head->value);
@@ -176,10 +193,7 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
  */
 int q_size(queue_t *q)
 {
-    /* TODO: You need to write the code for this function */
-    /* Remember: It should operate in O(1) time */
-    /* TODO: Remove the above comment when you are about to implement. */
-    // Dada: return the size we take down
+    // Return the queue size we take down
     if (q == NULL) {
         printf("ERROR: No size of a NULL queue\n");
         return 0;
@@ -196,8 +210,6 @@ int q_size(queue_t *q)
  */
 void q_reverse(queue_t *q)
 {
-    /* TODO: You need to write the code for this function */
-    /* TODO: Remove the above comment when you are about to implement. */
     if (q == NULL) {
         printf("ERROR: Reverse a NULL queue\n");
         return;
@@ -211,7 +223,7 @@ void q_reverse(queue_t *q)
         prev_ptr = current_ptr;
         current_ptr = next_ptr;
     }
-    // Dada: maintain the queue structure
+    // Maintain the queue structure
     list_ele_t *tmp = q->tail;
     q->tail = q->head;
     q->head = tmp;
@@ -222,6 +234,7 @@ void q_reverse(queue_t *q)
  * No effect if q is NULL or empty. In addition, if q has only one
  * element, do nothing.
  */
+/*
 void q_sort(queue_t *q)
 {
     char *a = "aa";
@@ -232,8 +245,6 @@ void q_sort(queue_t *q)
         printf("ERROR: q sort a NULL queue\n");
         return;
     }
-    /* TODO: You need to write the code for this function */
-    /* TODO: Remove the above comment when you are about to implement. */
     // Accroding to ascending order, bubble sort the queue
     list_ele_t *roundend = q->tail;
     while (roundend != q->head) {
@@ -241,7 +252,8 @@ void q_sort(queue_t *q)
         while (current != roundend) {
             // if current element is bigger than next element
             // than swap the values of the two
-            if (strcmp(current->value, current->next->value) > 0) {
+            if (strnatcmp(current->value, current->next->value) > 0) {
+            // if (strcmp(current->value, current->next->value) > 0) {
                 char *temp;
                 temp = current->next->value;
                 current->next->value = current->value;
@@ -251,6 +263,75 @@ void q_sort(queue_t *q)
                 roundend = current;
             else
                 current = current->next;
+        }
+    }
+}
+*/
+
+// new q_sort with merge sort
+void q_sort(queue_t *q)
+{
+    if (q_size(q) == 0 || q_size(q) == 1)
+        return;
+    // In order to avoid to extra line to handle head element
+    // case, we maintain a pseudo head.
+    list_ele_t *pseudo = malloc(sizeof(list_ele_t));
+    pseudo->next = q->head;
+    for (unsigned int interval = 1; interval < q_size(q); interval *= 2) {
+        // prv is the last element of previous round
+        // nxt is the first element of next round
+        // next_prv will record where prv will move to
+        list_ele_t *prv = pseudo;
+        list_ele_t *nxt = pseudo->next;
+        list_ele_t *next_prv = NULL;
+        while (nxt != NULL) {
+            // cur1 and cur2 lead two lists to be sorted
+            list_ele_t *cur1 = prv->next;
+            list_ele_t *cur2 = cur1;
+            for (unsigned int i = 0; cur2 != NULL && i < interval; ++i)
+                cur2 = cur2->next;
+
+            // move next_prv and nxt to correct place
+            if (cur2 == NULL) {
+                next_prv = nxt = NULL;
+            } else {
+                next_prv = cur2->next;
+                if (next_prv == NULL)
+                    nxt = NULL;
+                else {
+                    nxt = next_prv->next;
+                    for (unsigned int i = 0; nxt != NULL && i < interval - 1;
+                         ++i) {
+                        next_prv = nxt;
+                        nxt = nxt->next;
+                    }
+                }
+            }
+            queue_t *merge = q_new();
+            if (merge == NULL) {
+                printf("ERROR: Fail to merge sort\n");
+                return;
+            }
+            // cur1_end and cur2_end is the next element of each list
+            list_ele_t *cur1_end = cur2;
+            list_ele_t *cur2_end = nxt;
+            while (cur1 != cur1_end || cur2 != cur2_end) {
+                if (cur2 != cur2_end ||
+                    strnatcmp(cur1->value, cur2->value) < 0) {
+                    list_ele_t *tmp = cur1;
+                    q_insert_element_to_tail(merge, tmp);
+                    cur1 = cur1->next;
+                } else {
+                    list_ele_t *tmp = cur2;
+                    q_insert_element_to_tail(merge, tmp);
+                    cur2 = cur2->next;
+                }
+            }
+            prv->next = merge->head;
+            merge->tail->next = nxt;
+            // Only free the queue header. It is because
+            // we still need the list elements
+            free(merge);
         }
     }
 }

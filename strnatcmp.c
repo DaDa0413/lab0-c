@@ -167,7 +167,7 @@ int strnatcmp(nat_char const *a, nat_char const *b)
 
 
 /* Compare, recognizing numeric string and ignoring case. */
-int strnatcasecmp(nat_char const *a, nat_char const *b)
-{
-    return strnatcmp0(a, b, 1);
-}
+// int strnatcasecmp(nat_char const *a, nat_char const *b)
+// {
+//     return strnatcmp0(a, b, 1);
+// }

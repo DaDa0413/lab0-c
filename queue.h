@@ -67,15 +67,21 @@ bool q_insert_head(queue_t *q, char *s);
  */
 bool q_insert_tail(queue_t *q, char *s);
 
-/*
- * Attempt to remove element from head of queue.
- * Return true if successful.
- * Return false if queue is NULL or empty.
- * If sp is non-NULL and an element is removed, copy the removed string to *sp
- * (up to a maximum of bufsize-1 characters, plus a null terminator.)
- * The space used by the list element and the string should be freed.
+/* Insert a existed list element into queue
+ * Return True if success
+ * Return false if insert element to a NULL queue
  */
-bool q_remove_head(queue_t *q, char *sp, size_t bufsize);
+bool q_insert_element_to_tail(queue_t *q, list_ele_t *ele)
+
+    /*
+     * Attempt to remove element from head of queue.
+     * Return true if successful.
+     * Return false if queue is NULL or empty.
+     * If sp is non-NULL and an element is removed, copy the removed string to
+     * *sp (up to a maximum of bufsize-1 characters, plus a null terminator.)
+     * The space used by the list element and the string should be freed.
+     */
+    bool q_remove_head(queue_t *q, char *sp, size_t bufsize);
 
 /*
  * Return number of elements in queue.
