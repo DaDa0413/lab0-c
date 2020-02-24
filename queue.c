@@ -234,56 +234,21 @@ void q_reverse(queue_t *q)
  * No effect if q is NULL or empty. In addition, if q has only one
  * element, do nothing.
  */
-/*
-void q_sort(queue_t *q)
-{
-    char *a = "aa";
-    char *b = "bb";
-    strnatcmp(a, b);
-    strnatcasecmp(a, b);
-    if (q == NULL) {
-        printf("ERROR: q sort a NULL queue\n");
-        return;
-    }
-    // Accroding to ascending order, bubble sort the queue
-    list_ele_t *roundend = q->tail;
-    while (roundend != q->head) {
-        list_ele_t *current = q->head;
-        while (current != roundend) {
-            // if current element is bigger than next element
-            // than swap the values of the two
-            if (strnatcmp(current->value, current->next->value) > 0) {
-            // if (strcmp(current->value, current->next->value) > 0) {
-                char *temp;
-                temp = current->next->value;
-                current->next->value = current->value;
-                current->value = temp;
-            }
-            if (current->next == roundend)
-                roundend = current;
-            else
-                current = current->next;
-        }
-    }
-}
-*/
-
 // new q_sort with merge sort
 void q_sort(queue_t *q)
 {
-    if (q_size(q) == 0 || q_size(q) == 1)
+    if (q == NULL || q_size(q) == 0 || q_size(q) == 1)
         return;
     // In order to avoid to extra line to handle head element
     // case, we maintain a pseudo head.
-    list_ele_t *pseudo = malloc(sizeof(list_ele_t));
-    pseudo->next = q->head;
+    list_ele_t pseudo;
+    pseudo.next = q->head;
     for (unsigned int interval = 1; interval < q_size(q); interval *= 2) {
         // prv is the last element of previous round
         // nxt is the first element of next round
         // next_prv will record where prv will move to
-        list_ele_t *prv = pseudo;
-        list_ele_t *nxt = pseudo->next;
-        list_ele_t *next_prv = NULL;
+        list_ele_t *prv = &pseudo;
+        list_ele_t *nxt = pseudo.next;
         while (nxt != NULL) {
             // cur1 and cur2 lead two lists to be sorted
             list_ele_t *cur1 = prv->next;
@@ -292,46 +257,32 @@ void q_sort(queue_t *q)
                 cur2 = cur2->next;
 
             // move next_prv and nxt to correct place
-            if (cur2 == NULL) {
-                next_prv = nxt = NULL;
-            } else {
-                next_prv = cur2->next;
-                if (next_prv == NULL)
-                    nxt = NULL;
-                else {
-                    nxt = next_prv->next;
-                    for (unsigned int i = 0; nxt != NULL && i < interval - 1;
-                         ++i) {
-                        next_prv = nxt;
-                        nxt = nxt->next;
-                    }
-                }
-            }
-            queue_t *merge = q_new();
-            if (merge == NULL) {
-                printf("ERROR: Fail to merge sort\n");
-                return;
-            }
+            nxt = cur2;
+            for (unsigned int i = 0; nxt != NULL && i < interval; ++i)
+                nxt = nxt->next;
+
+            queue_t merge = {.head = NULL, .tail = NULL, .size = 0};
             // cur1_end and cur2_end is the next element of each list
             list_ele_t *cur1_end = cur2;
             list_ele_t *cur2_end = nxt;
             while (cur1 != cur1_end || cur2 != cur2_end) {
-                if (cur2 != cur2_end ||
-                    strnatcmp(cur1->value, cur2->value) < 0) {
-                    list_ele_t *tmp = cur1;
-                    q_insert_element_to_tail(merge, tmp);
+                if (cur2 == cur2_end ||
+                    (cur1 != cur1_end &&
+                     strnatcmp(cur1->value, cur2->value) < 0)) {
+                    list_ele_t *tmp1 = cur1;
                     cur1 = cur1->next;
+                    q_insert_element_to_tail(&merge, tmp1);
                 } else {
-                    list_ele_t *tmp = cur2;
-                    q_insert_element_to_tail(merge, tmp);
+                    list_ele_t *tmp2 = cur2;
                     cur2 = cur2->next;
+                    q_insert_element_to_tail(&merge, tmp2);
                 }
             }
-            prv->next = merge->head;
-            merge->tail->next = nxt;
-            // Only free the queue header. It is because
-            // we still need the list elements
-            free(merge);
+            prv->next = merge.head;
+            prv = merge.tail;
+            merge.tail->next = nxt;
+            q->tail = merge.tail;
         }
     }
+    q->head = pseudo.next;
 }
