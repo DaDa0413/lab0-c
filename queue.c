@@ -13,8 +13,7 @@
 queue_t *q_new()
 {
     queue_t *q = malloc(sizeof(queue_t));
-    /* TODO: What if malloc returned NULL? */
-    // Dada: If nothing return by malloc, just return NULL
+    // If nothing return by malloc, just return NULL
     if (q == NULL) {
         printf("ERROR: q_new() failed\n");
         return NULL;
@@ -61,25 +60,23 @@ bool q_insert_head(queue_t *q, char *s)
         return false;
     }
     list_ele_t *newh = malloc(sizeof(list_ele_t));
-    /* Don't forget to allocate space for the string and copy it */
-    /* What if either call to malloc returns NULL? */
     if (newh == NULL) {
-        // Dada: if queue is allocated at this time
+        // If queue is allocated at this time
         printf("ERROR: allocate newh fail\n");
         return false;
     }
     unsigned int s_lenth = strlen(s);
     newh->value = malloc(sizeof(char) * (s_lenth + 1));
-    // Dada: if fail to allocate space for value
+    // If fail to allocate space for value
     if (newh->value == NULL) {
         printf("ERROR: allocate newh->value fail\n");
         free(newh);
-        // Dada: if queue is allocated at this time
+        // If queue is allocated at this time
         return false;
     }
     strncpy(newh->value, s, s_lenth);
     newh->value[s_lenth] = '\0';
-    // Dada: maintain the queue structure
+    // Maintain the queue structure
     newh->next = q->head;
     q->head = newh;
     if (q->size == 0)
@@ -97,30 +94,25 @@ bool q_insert_head(queue_t *q, char *s)
  */
 bool q_insert_tail(queue_t *q, char *s)
 {
-    /* TODO: You need to write the complete code for this function */
-    /* Remember: It should operate in O(1) time */
-    /* TODO: Remove the above comment when you are about to implement. */
     if (q == NULL) {
         printf("ERROR: Insert tail to a NULL queue\n");
         return false;
     }
     list_ele_t *newh;
     newh = malloc(sizeof(list_ele_t));
-    /* Don't forget to allocate space for the string and copy it */
-    /* What if either call to malloc returns NULL? */
     if (newh == NULL) {
         return false;
     }
     unsigned int s_lenth = strlen(s);
     newh->value = malloc(sizeof(char) * (s_lenth + 1));
-    // Dada: if fail to allocate space for value
+    // If fail to allocate space for value
     if (newh->value == NULL) {
         free(newh);
         return false;
     }
     strncpy(newh->value, s, s_lenth);
     newh->value[s_lenth] = '\0';
-    // Dada: maintain the queue structure
+    // Maintain the queue structure
     newh->next = NULL;
     if (q->size != 0)
         q->tail->next = newh;
@@ -177,7 +169,7 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
             sp[bufsize - 1] = '\0';
     }
     list_ele_t *tmp = q->head;
-    // Dada: maintain queue structure and free removed element
+    // Maintain queue structure and free removed element
     q->size -= 1;
     q->head = q->head->next;
     if (q->size == 0) {
